@@ -10,8 +10,7 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import org.jsonschema2pojo.*
 import org.jsonschema2pojo.rules.RuleFactory
-import java.io.File
-import java.io.PrintWriter
+import java.io.*
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -22,6 +21,7 @@ import java.util.concurrent.TimeUnit
 public class MainController : Initializable {
 
   @FXML var jsonTextArea: TextArea? = null
+  @FXML var consoleTextArea: TextArea? = null
   @FXML var packageNameField: TextField? = null
   @FXML var generateButton: Button? = null
   @FXML var classNameField: TextField? = null
@@ -34,6 +34,12 @@ public class MainController : Initializable {
   }, GsonAnnotator(), SchemaStore()), SchemaGenerator())
 
   override fun initialize(url: URL?, bundle: ResourceBundle?) {
+
+    var console = Console(consoleTextArea!!)
+    var ps = PrintStream(console, true)
+    System.setOut(ps)
+    System.setErr(ps)
+
     val jsonObservable = JavaFxObservable
         .fromObservableValue(jsonTextArea!!.textProperty())
         .doOnNext { generateButton?.isDisable == it.isEmpty() }
@@ -51,19 +57,15 @@ public class MainController : Initializable {
         .fromNodeEvents(generateButton!!, ActionEvent.ACTION)
         .throttleLast(3, TimeUnit.SECONDS)
 
-    val jsonInputs = jsonObservable.zipWith(clicks) { json, click ->
-      json
-    }
-
-    rx.Observable.combineLatest(jsonInputs, packageNameObservable, classNameObservable) {
-      json, packageName, className ->
+    rx.Observable.combineLatest(jsonObservable, packageNameObservable, classNameObservable, clicks) {
+      json, packageName, className, clicks ->
       val dir = File("json2pojoOutput")
       removeOldOutput(dir)
       dir.mkdir()
       val inputFile = createInputFile(json)
       mapper.generate(codeModel, className, packageName, inputFile.toURI().toURL())
       codeModel.build(dir)
-      inputFile.deleteOnExit()
+      inputFile.delete()
       dir
     }.subscribe({
       file ->
@@ -76,7 +78,7 @@ public class MainController : Initializable {
 
   // https://github.com/joelittlejohn/jsonschema2pojo/issues/255
   private fun createInputFile(json: String): File {
-    val inputFile = File("tmp.json")
+    val inputFile = File("json2pojoOutput/tmp.json")
     inputFile.createNewFile()
     val out = PrintWriter(inputFile)
     out.print(json)
@@ -97,6 +99,13 @@ public class MainController : Initializable {
       for (f in targetDirectory.listFiles()!!) {
         delete(f)
       }
+    }
+  }
+
+  class Console(private val output: TextArea) : OutputStream() {
+    @Throws(IOException::class)
+    override fun write(i: Int) {
+      output.appendText(i.toChar().toString())
     }
   }
 
