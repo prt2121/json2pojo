@@ -12,7 +12,8 @@ import javafx.scene.control.TextField
 import javafx.scene.input.MouseEvent
 import org.jsonschema2pojo.*
 import org.jsonschema2pojo.rules.RuleFactory
-import java.io.*
+import java.io.File
+import java.io.PrintWriter
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -23,26 +24,12 @@ import java.util.concurrent.TimeUnit
 public class MainController : Initializable {
 
   @FXML var jsonTextArea: TextArea? = null
-  @FXML var consoleTextArea: TextArea? = null
   @FXML var packageNameField: TextField? = null
   @FXML var generateButton: Button? = null
   @FXML var classNameField: TextField? = null
   @FXML var progressIndicator: ProgressIndicator? = null
 
-
-  val codeModel = JCodeModel()
-  val mapper = SchemaMapper(RuleFactory(object : DefaultGenerationConfig() {
-    public override fun getSourceType(): SourceType {
-      return SourceType.JSON
-    }
-  }, GsonAnnotator(), SchemaStore()), SchemaGenerator())
-
   override fun initialize(url: URL?, bundle: ResourceBundle?) {
-    var console = Console(consoleTextArea!!)
-    var ps = PrintStream(console, true)
-    System.setOut(ps)
-    System.setErr(ps)
-
     val jsonObservable = JavaFxObservable
         .fromObservableValue(jsonTextArea!!.textProperty())
         .throttleLast(1, TimeUnit.SECONDS)
@@ -68,25 +55,34 @@ public class MainController : Initializable {
       }
     }.subscribe()
 
-    clicks.map {
-      val packageName = packageNameField?.textProperty()?.value ?: ""
-      Input(jsonTextArea!!.textProperty().value, packageName, classNameField!!.textProperty().value)
-    }.doOnNext {
+    clicks.doOnNext {
       Platform.runLater {
         progressIndicator!!.isVisible = true
       }
     }.map {
-      input ->
       val dir = File("json2pojoOutput")
-      dir.deleteRecursively()
+      dir to dir.deleteRecursively()
+    }.filter { it.second }.map {
+      it.first
+    }.map {
+      dir ->
       dir.mkdir()
+      val packageName = packageNameField?.textProperty()?.value ?: ""
+      val input = Input(jsonTextArea!!.textProperty().value, packageName, classNameField!!.textProperty().value)
       val inputFile = createInputFile(input.json)
+      val codeModel = JCodeModel()
+      val mapper = SchemaMapper(RuleFactory(object : DefaultGenerationConfig() {
+        public override fun getSourceType(): SourceType {
+          return SourceType.JSON
+        }
+      }, GsonAnnotator(), SchemaStore()), SchemaGenerator())
       mapper.generate(codeModel, input.className, input.packageName, inputFile.toURI().toURL())
       codeModel.build(dir)
       inputFile.delete()
       dir
     }.subscribe({
       file ->
+      println(file.name)
       println(file.absolutePath)
       Platform.runLater {
         progressIndicator!!.isVisible = false
@@ -102,7 +98,7 @@ public class MainController : Initializable {
         progressIndicator!!.isVisible = false
       }
     })
-    
+
   }
 
   // https://github.com/joelittlejohn/jsonschema2pojo/issues/255
@@ -113,13 +109,6 @@ public class MainController : Initializable {
     out.print(json)
     out.close()
     return inputFile
-  }
-
-  class Console(private val output: TextArea) : OutputStream() {
-    @Throws(IOException::class)
-    override fun write(i: Int) {
-      output.appendText(i.toChar().toString())
-    }
   }
 
   class Input(val json: String, val packageName: String, val className: String) {
