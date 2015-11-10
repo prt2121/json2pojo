@@ -19,5 +19,5 @@ class PojoApplication : Application() {
 }
 
 fun main(args: Array<String>) {
-  Application.launch(javaClass<PojoApplication>(), * arrayOf())
+  Application.launch(PojoApplication::class.java, * arrayOf())
 }
