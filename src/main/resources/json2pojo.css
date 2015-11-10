@@ -42,7 +42,7 @@
 }
 .body {
   -fx-font-family: 'Roboto';
-  -fx-background-color: #2D3639;
+  -fx-background-color: #363430;
   -fx-border-color: transparent;
 }
 .caption {
@@ -124,7 +124,6 @@
     -fx-background-color: #7e57c2;
   -fx-background-radius: 2px;
 }
-
 .overlay-mask {
   -fx-background-color: black;
 }
@@ -136,25 +135,24 @@
   -fx-text-fill: #FFFFFF;
   -fx-font-weight: bold;
 }
+.button:disabled {
+  -fx-background-color: #98a8ba;
+  -fx-text-fill: #081e37;
+}
 .button.flat {
   -fx-min-width: 88px;
   -fx-max-height: 36px;
 }
-.button.flat:hover {
-  -fx-background-color: #999999;
+.button:hover {
+  -fx-background-color: #287BDE;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.3, 1, 5);
 }
-.button.flat:pressed {
-  -fx-background-color: #999999;
+.button:pressed {
+  -fx-background-color: #287BDE;
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 1, 0.1, 2, 2);
 }
 .button.flat:disabled {
   -fx-text-fill: rgba(0, 0, 0, 0.26);
-}
-.button.raised {
-  -fx-min-width: 88px;
-  -fx-max-height: 36px;
-  -fx-background-color: #c8c8c8;
-  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 1, 0.1, 2, 2);
 }
 .button.raised:pressed {
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.3, 1, 5);
@@ -166,15 +164,14 @@
   -font-family: 'Roboto';
   -fx-border-color: transparent;
   -fx-text-fill: #FFFFFF;
-  -fx-background-color: #3D484D;
+  -fx-background-color: #43413D;
 }
 .text-area {
   -font-family: 'Roboto';
   -fx-border-color: transparent;
   -fx-text-fill: #FFFFFF;
-  -fx-background-color: #3D484D;
+  -fx-background-color: #43413D;
 }
-
 .text-area .content {
-  -fx-background-color: #3D484D;
+  -fx-background-color: #43413D;
 }
