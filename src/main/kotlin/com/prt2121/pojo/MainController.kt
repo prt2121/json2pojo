@@ -12,8 +12,7 @@ import javafx.scene.control.TextField
 import javafx.scene.input.MouseEvent
 import org.jsonschema2pojo.*
 import org.jsonschema2pojo.rules.RuleFactory
-import java.io.File
-import java.io.PrintWriter
+import java.io.*
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -30,6 +29,13 @@ public class MainController : Initializable {
   @FXML var progressIndicator: ProgressIndicator? = null
 
   override fun initialize(url: URL?, bundle: ResourceBundle?) {
+    // for logging after packaging
+    System.setOut(PrintStream(object : OutputStream() {
+      override fun write(b: Int) {
+        appendText(b.toChar().toString())
+      }
+    }, true))
+
     val jsonObservable = JavaFxObservable
         .fromObservableValue(jsonTextArea!!.textProperty())
         .throttleLast(1, TimeUnit.SECONDS)
@@ -61,7 +67,8 @@ public class MainController : Initializable {
       }
     }.map {
       val dir = File("json2pojoOutput")
-      dir to dir.deleteRecursively()
+      val success = if(dir.exists()) dir.deleteRecursively() else true
+      dir to success
     }.filter { it.second }.map {
       it.first
     }.map {
@@ -79,9 +86,11 @@ public class MainController : Initializable {
       mapper.generate(codeModel, input.className, input.packageName, inputFile.toURI().toURL())
       codeModel.build(dir)
       inputFile.delete()
+      println("\n")
       dir
     }.subscribe({
       file ->
+      println("\n")
       println(file.name)
       println(file.absolutePath)
       Platform.runLater {
@@ -133,4 +142,7 @@ public class MainController : Initializable {
     }
   }
 
+  fun appendText(str: String) {
+    Platform.runLater { jsonTextArea!!.appendText(str) }
+  }
 }
