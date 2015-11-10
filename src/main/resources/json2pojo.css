@@ -168,3 +168,13 @@
   -fx-text-fill: #FFFFFF;
   -fx-background-color: #3D484D;
 }
+.text-area {
+  -font-family: 'Roboto';
+  -fx-border-color: transparent;
+  -fx-text-fill: #FFFFFF;
+  -fx-background-color: #3D484D;
+}
+
+.text-area .content {
+  -fx-background-color: #3D484D;
+}
