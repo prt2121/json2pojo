@@ -13,12 +13,12 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="520.0" prefWidth="640.0" visible="true" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.prt2121.pojo.MainController">
   <children>
-    <AnchorPane prefHeight="520.0" prefWidth="640.0">
+    <AnchorPane prefHeight="520.0" prefWidth="640.0" styleClass="body">
       <children>
-        <TextArea fx:id="jsonTextArea" layoutX="14.0" layoutY="14.0" prefHeight="390.0" prefWidth="612.0" promptText="{ &quot;your_json&quot; : &quot;here&quot; }" wrapText="true" />
-        <TextField fx:id="packageNameField" layoutX="14.0" layoutY="423.0" prefHeight="28.0" prefWidth="306.0" promptText="package" />
-        <TextField fx:id="classNameField" layoutX="320.0" layoutY="423.0" prefHeight="28.0" prefWidth="306.0" promptText="class" text="" />
-        <Button fx:id="generateButton" disable="true" layoutX="230.0" layoutY="468.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="180.0" text="Generate" />
+        <TextArea fx:id="jsonTextArea" layoutX="14.0" layoutY="14.0" prefHeight="390.0" prefWidth="612.0" promptText="{ &quot;your_json&quot; : &quot;here&quot; }" styleClass="text-field" wrapText="true" />
+        <TextField fx:id="packageNameField" layoutX="14.0" layoutY="423.0" prefHeight="28.0" prefWidth="298.0" promptText="package" />
+        <TextField fx:id="classNameField" layoutX="328.0" layoutY="423.0" prefHeight="28.0" prefWidth="298.0" promptText="class" text="" />
+        <Button fx:id="generateButton" disable="true" layoutX="230.0" layoutY="468.0" mnemonicParsing="false" opacity="0.7" prefHeight="28.0" prefWidth="180.0" text="GENERATE" />
         <ProgressIndicator fx:id="progressIndicator" layoutX="303.0" layoutY="240.0" progress="-1.0" visible="false" />
       </children>
     </AnchorPane>
