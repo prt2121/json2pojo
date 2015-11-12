@@ -1,0 +1,76 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-1103'
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'kotlin'
+//apply from: "http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-1103'
+    compile 'org.jsonschema2pojo:jsonschema2pojo-core:0.4.16'
+    compile 'io.reactivex:rxjava:1.0.15'
+}
+
+//jar {
+//    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+//    manifest {
+//        attributes 'Main-Class': 'com.prt2121.pojo.PojoApplication'
+//    }
+//
+//    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+//}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/main/kotlin'
+            srcDir 'build/generated'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'build/generated'
+        }
+    }
+}
+
+/*
+javafx {
+    // Points to JDK and its JavaFX libraries, also declares target runtime JDK
+    //javaRuntime = '/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk'
+
+    // Application name and ID presented by target OS
+    appID 'json2pojo'
+    appName 'json2pojo'
+
+    // Main class of application
+    mainClass 'com.prt2121.pojo.PojoApplication'
+
+    // JVM arguments, system properties, application command line arguments
+    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
+    systemProperties = ['prism.disableRegionCaching':'true']
+    arguments = ['-l', '--fast']
+
+    // Keystore credentials for signing JAR
+    // Generate key: keytool -genkey -alias release -keyalg RSA -keystore keystore.jks -keysize 2048
+    releaseKey {
+        alias = 'prat'
+        keyPass = ''
+        keyStore = file("${System.properties['user.home']}/Desktop/prat.jks")
+        storePass = ''
+    }
+
+    signingMode 'release'
+
+}
+*/
